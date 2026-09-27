@@ -1,0 +1,11 @@
+# Python compiled files
+__pycache__/
+*.pyc
+
+# Logs
+logs/
+*.log
+
+# Environment variables (keep .env.example tracked, ignore actual secrets)
+.env
+.env.local
