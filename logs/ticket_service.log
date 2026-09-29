@@ -300,3 +300,11 @@ components.schemas.TicketDTO.Reference.$ref
 2026-09-29 15:18:58 INFO    [ticket_service.access] request_id=082f6d165423 GET /docs -> 200 in 0.3 ms
 2026-09-29 15:19:02 INFO    [ticket_service.access] request_id=87471d6dc9d8 GET /openapi.json -> 200 in 55.5 ms
 2026-09-29 15:19:02 INFO    [ticket_service] Ticket service stopped
+2026-09-29 15:28:06 INFO    [ticket_service] Logging configured: level=INFO file=logs/ticket_service.log json=False audit=True
+2026-09-29 15:28:07 WARNING [app.auth.access_control] ACCESS_CONTROL_URL не задан - используется встроенный stub (только для разработки!)
+2026-09-29 15:28:07 WARNING [ticket_service] TICKETS_DATABASE_URL=memory -> in-memory хранилище (только для разработки)
+2026-09-29 15:28:07 INFO    [ticket_service] Seeded 5 demo users into справочник
+2026-09-29 15:28:07 INFO    [ticket_service] Dependencies ready: storage=InMemoryTicketRepository cache=memory notifications=on
+2026-09-29 15:28:07 INFO    [ticket_service] Ticket service started (storage=InMemoryTicketRepository)
+2026-09-29 15:28:09 INFO    [ticket_service.access] request_id=85856a2eb7fd GET /health -> 200 in 1.6 ms
+2026-09-29 15:28:11 INFO    [ticket_service] Ticket service stopped
