@@ -270,3 +270,8 @@ components.schemas.TicketDTO.Reference.$ref
 2026-09-29 11:32:53 INFO    [ticket_service.access] request_id=762b63df6fe1 GET /api/v1/tickets -> 200 in 2.2 ms
 2026-09-29 11:33:10 INFO    [ticket_service.access] request_id=c8a8bbf581fb GET /openapi.json -> 200 in 1.4 ms
 2026-09-29 11:33:10 INFO    [ticket_service] Ticket service stopped
+2026-09-29 11:38:16 INFO    [ticket_service] Logging configured: level=INFO file=logs/ticket_service.log json=False audit=True
+2026-09-29 11:39:11 INFO    [ticket_service] Logging configured: level=INFO file=logs/ticket_service.log json=False audit=True
+2026-09-29 11:39:15 INFO    [ticket_service] Logging configured: level=INFO file=logs/ticket_service.log json=False audit=True
+2026-09-29 11:39:19 INFO    [ticket_service] Logging configured: level=INFO file=logs/ticket_service.log json=False audit=True
+2026-09-29 11:45:13 INFO    [ticket_service] Logging configured: level=INFO file=logs/ticket_service.log json=False audit=True

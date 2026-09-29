@@ -251,9 +251,18 @@ class TestErrors:
         # схема не пустит срок в прошлое (422) ...
         with pytest.raises(PydValidationError):
             TicketUpdateRequest(due_date=(date.today() - timedelta(days=1)).isoformat())
-        # ... а сервис не даст поставить срок раньше даты постановки заявки
+        # ... а сервис для «свежей» заявки (создана сегодня) тоже не даст
+        # поставить срок раньше даты постановки (проверка уровня сервиса,
+        # поэтому схема-валидатор "в прошлом" здесь обходится через model_construct)
+        fresh = service.create_ticket(
+            TicketCreateRequest(**valid_payload()), make_actor()
+        )
         with pytest.raises(ValidationError) as info:
-            service.update_ticket(dto.id, TicketUpdateRequest(due_date=date.today()), make_actor())
+            service.update_ticket(
+                fresh.id,
+                TicketUpdateRequest.model_construct(due_date=date.today() - timedelta(days=1)),
+                make_actor(),
+            )
         assert "раньше даты постановки" in info.value.message
         assert info.value.code == "validation_error"
 
