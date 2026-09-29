@@ -1,0 +1,30 @@
+# Reverse-proxy для Ticket Service.
+# DOMAIN подставляется из env контейнера caddy (см. docker-compose profile https).
+#
+# Перед запуском:
+#   1. DNS A-запись DOMAIN → публичный IP VPS
+#   2. Открыты порты 80 и 443 в firewall
+#   3. В docker-compose для app можно убрать публикацию 8080 наружу
+#      (оставьте только внутреннюю сеть), если хотите закрыть прямой HTTP.
+
+{$DOMAIN} {
+	encode gzip
+
+	header {
+		# Базовая защита заголовками (CORS делает сам FastAPI)
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		-Server
+	}
+
+	reverse_proxy app:8080 {
+		header_up X-Real-IP {remote_host}
+		header_up X-Forwarded-Proto {scheme}
+		header_up X-Forwarded-Host {host}
+	}
+
+	log {
+		output stdout
+		format console
+	}
+}

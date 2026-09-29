@@ -2,8 +2,7 @@
 # ============================================================================
 # Микросервис заявок (Ticket Service) — образ для продакшена.
 #
-# Multi-stage сборка: зависимости ставятся в отдельном слое, в финальный
-# образ попадают только установленные пакеты и код приложения.
+# Порт внутри контейнера: 8080 (везде одинаковый: EXPOSE / HEALTHCHECK / CMD).
 #
 # Сборка:  docker build -t ticket-service:1.0.0 .
 # Запуск:  docker run -d --name ticket-service -p 8080:8080 \
@@ -42,39 +41,33 @@ LABEL org.opencontainers.image.title="ticket-service" \
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PATH="/opt/venv/bin:$PATH" \
-    # host/port HTTP-сервера внутри контейнера (переопределяются через -e)
     TICKETS_HOST=0.0.0.0 \
     TICKETS_PORT=8080
 
-# Только минимально необходимые системные пакеты:
 # curl — healthcheck, libpq5 — драйвер psycopg2-binary
 RUN apt-get update \
     && apt-get install -y --no-install-recommends curl libpq5 \
     && rm -rf /var/lib/apt/lists/*
 
-# Непривилегированный пользователь (требование безопасности)
 RUN groupadd --gid 10001 appuser \
     && useradd --uid 10001 --gid appuser --shell /usr/sbin/nologin --create-home appuser
 
 WORKDIR /srv/ticket-service
 
-# Виртуальное окружение с зависимостями из стадии сборки
 COPY --from=builder /opt/venv /opt/venv
 
-# Код приложения и схема БД
 COPY app/ ./app/
 COPY db/ ./db/
 COPY run.py README.md ./
 
-# Каталог логов доступен на запись непривилегированному пользователю
 RUN mkdir -p logs && chown -R appuser:appuser /srv/ticket-service
 
 USER appuser
 
 EXPOSE 8080
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
-    CMD curl -fsS http://localhost:8080/api/v1/health || exit 1
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+    CMD curl -fsS http://127.0.0.1:8080/health || exit 1
 
-# Uvicorn поднимает несколько воркеров; graceful shutdown за 25 секунд
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080", "--workers", "2"]
+# Порт совпадает с TICKETS_PORT / EXPOSE / docker-compose mapping 8080:8080
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080", "--workers", "2", "--proxy-headers", "--forwarded-allow-ips", "*"]

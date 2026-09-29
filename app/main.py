@@ -14,6 +14,7 @@ from typing import Optional
 
 from fastapi import FastAPI, Request, Response, status
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import DBAPIError, IntegrityError, OperationalError
 
@@ -227,6 +228,33 @@ async def lifespan(app: FastAPI):
     logger.info("Ticket service stopped")
 
 
+def _openapi_servers(settings: Settings) -> list[dict]:
+    """Список servers для Swagger: публичный URL (если задан) + локальные."""
+    servers: list[dict] = []
+    if settings.public_base_url.strip():
+        servers.append(
+            {
+                "url": settings.public_base_url.strip().rstrip("/"),
+                "description": "Публичный URL (VPS / прод)",
+            }
+        )
+    servers.extend(
+        [
+            {"url": "http://localhost:8080", "description": "Локальная разработка"},
+            {"url": "http://ticket-service:8080", "description": "Docker-сеть (docker-compose)"},
+        ]
+    )
+    return servers
+
+
+def _parse_cors_origins(raw: str) -> list[str]:
+    """``CORS_ORIGINS``: comma-separated list или ``*``."""
+    value = (raw or "").strip()
+    if not value or value == "*":
+        return ["*"]
+    return [part.strip() for part in value.split(",") if part.strip()]
+
+
 def create_app(settings: Optional[Settings] = None) -> FastAPI:
     """Фабрика приложения (используется run.py и тестами)."""
     settings = settings or get_settings()
@@ -237,15 +265,34 @@ def create_app(settings: Optional[Settings] = None) -> FastAPI:
         openapi_tags=OPENAPI_TAGS,
         contact={"name": "Ticket Service Team", "email": "support@example.com"},
         license_info={"name": "MIT License"},
-        servers=[
-            {"url": "http://localhost:8080", "description": "Локальная разработка"},
-            {"url": "http://ticket-service:8080", "description": "Docker-сеть (docker-compose)"},
-        ],
+        servers=_openapi_servers(settings),
         lifespan=lifespan,
         docs_url="/docs",
         redoc_url="/redoc",
         swagger_ui_parameters={"persistAuthorization": True, "displayRequestDuration": True},
         openapi_url="/openapi.json",
+    )
+
+    origins = _parse_cors_origins(settings.cors_origins)
+    # credentials + "*" нельзя сочетать по спецификации браузера
+    allow_credentials = settings.cors_allow_credentials and origins != ["*"]
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=origins,
+        allow_credentials=allow_credentials,
+        allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+        allow_headers=[
+            "Accept",
+            "Accept-Language",
+            "Content-Type",
+            "Authorization",
+            "X-API-Key",
+            "X-User-Id",
+            "X-Role",
+            "X-Request-Id",
+        ],
+        expose_headers=["X-Request-Id"],
+        max_age=600,
     )
 
     register_exception_handlers(app)
@@ -256,8 +303,7 @@ def create_app(settings: Optional[Settings] = None) -> FastAPI:
     app.include_router(notification_routes.router, prefix=settings.api_prefix)
     app.include_router(cache_routes.router, prefix=settings.api_prefix)
 
-    @app.get("/health", response_model=HealthResponse, tags=["Сервис"], summary="Состояние сервиса")
-    def health() -> HealthResponse:
+    def _health_payload() -> HealthResponse:
         repository = getattr(app.state, "repository", None)
         access = getattr(app.state, "access_control", None)
         cache = getattr(app.state, "cache", None)
@@ -274,6 +320,20 @@ def create_app(settings: Optional[Settings] = None) -> FastAPI:
             cache=(cache.backend.name if cache is not None and cache.backend.stats().get("enabled") else "off"),
             notifications=("on" if notifications is not None and notifications.enabled else "off"),
         )
+
+    @app.get("/health", response_model=HealthResponse, tags=["Сервис"], summary="Состояние сервиса")
+    def health() -> HealthResponse:
+        return _health_payload()
+
+    @app.get(
+        f"{settings.api_prefix}/health",
+        response_model=HealthResponse,
+        tags=["Сервис"],
+        summary="Состояние сервиса (под префиксом API)",
+        include_in_schema=False,
+    )
+    def health_api() -> HealthResponse:
+        return _health_payload()
 
     @app.get("/", tags=["Сервис"], summary="Информация о сервисе")
     def index() -> dict:

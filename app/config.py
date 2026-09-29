@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from functools import lru_cache
 
+from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -18,6 +19,7 @@ class Settings(BaseSettings):
         env_file=".env",
         env_file_encoding="utf-8",
         extra="ignore",
+        populate_by_name=True,
     )
 
     # --- Идентификация сервиса ------------------------------------------------
@@ -29,9 +31,23 @@ class Settings(BaseSettings):
     tickets_host: str = "0.0.0.0"
     tickets_port: int = 8080
 
+    # --- CORS (фронтенд с другого origin) ------------------------------------
+    #: список origin через запятую, например:
+    #: https://app.example.com,http://localhost:5173
+    #: "*" — разрешить любой origin (только для отладки; с credentials несовместимо)
+    cors_origins: str = "*"
+    #: разрешить cookies / Authorization (нужны конкретные origin, не "*")
+    cors_allow_credentials: bool = False
+
+    # --- Публичный URL сервиса (для OpenAPI /docs) ---------------------------
+    #: например https://api.example.com — попадает в servers OpenAPI
+    public_base_url: str = ""
+
     # --- Хранилище ------------------------------------------------------------
-    database_url: str = (
-        "postgresql+psycopg2://tickets_app:tickets_pass@127.0.0.1:5432/tickets_db"
+    # В .env / compose используется TICKETS_DATABASE_URL (историческое имя).
+    database_url: str = Field(
+        default="postgresql+psycopg2://tickets_app:tickets_pass@127.0.0.1:5432/tickets_db",
+        validation_alias=AliasChoices("TICKETS_DATABASE_URL", "DATABASE_URL", "database_url"),
     )
     db_pool_size: int = 5
     db_max_overflow: int = 10

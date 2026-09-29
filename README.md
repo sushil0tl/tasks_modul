@@ -20,10 +20,15 @@
 ticket_service/
 ├── run.py                  # точка входа (uvicorn)
 ├── requirements.txt
-├── .env.example
-├── db/schema.sql           # DDL (таблицы tickets / ticket_users / ticket_history)
+├── .env.example            # шаблон ENV (CORS, ключи, домен)
+├── docker-compose.yml      # БД + API (+ Caddy HTTPS, profile https)
+├── Dockerfile              # порт 8080 внутри контейнера
+├── deploy/
+│   ├── Caddyfile           # reverse-proxy + Let's Encrypt
+│   └── VPS.md              # пошаговый деплой на VPS
+├── db/schema.sql           # DDL (tickets / ticket_users / ticket_history / notifications)
 └── app/
-    ├── main.py             # FastAPI + регистрация роутеров
+    ├── main.py             # FastAPI + CORS + роутеры
     ├── config.py           # настройки из ENV
     ├── database.py         # пул соединений с PostgreSQL
     ├── models.py           # Enum-стадии, Pydantic-схемы запросов/ответов
@@ -38,7 +43,9 @@ ticket_service/
     └── api/routes/
         ├── tickets.py        # эндпоинты заявок
         ├── objects.py        # сводка по объектам
-        └── users.py          # справочник пользователей (для UI)
+        ├── users.py          # справочник пользователей (для UI)
+        ├── notifications.py  # inbox уведомлений
+        └── cache.py          # метрики/сброс кэша
 ```
 
 ## Запуск
@@ -46,11 +53,21 @@ ticket_service/
 ### Вариант 1 — Docker (рекомендуется, поднимает и PostgreSQL)
 
 ```bash
-docker compose up -d --build     # БД + сервис в одном стенде
-curl http://localhost:8080/api/v1/health
+cp .env.example .env         # задайте TICKETS_API_KEY и CORS_ORIGINS
+docker compose up -d --build
+curl http://localhost:8080/health
 # Swagger UI: http://localhost:8080/docs
-docker compose down -v           # остановить и удалить том с данными
+docker compose down -v       # остановить и удалить том с данными
 ```
+
+Порты (везде **8080** для HTTP API):
+
+| Где | Порт |
+|---|---|
+| Uvicorn внутри контейнера | `8080` |
+| Проброс на хост | `${TICKETS_PUBLISH_PORT:-8080}:8080` |
+| PostgreSQL | только внутри docker-сети (`db:5432`), наружу не публикуется |
+| HTTPS (Caddy, profile `https`) | `80` / `443` → `app:8080` |
 
 Только образ сервиса без compose:
 
@@ -58,11 +75,34 @@ docker compose down -v           # остановить и удалить том
 docker build -t ticket-service:1.0.0 .
 docker run -d --name ticket-service -p 8080:8080 \
   -e TICKETS_DATABASE_URL="postgresql+psycopg2://tickets_app:tickets_pass@host.docker.internal:5432/tickets_db" \
+  -e CORS_ORIGINS="http://localhost:5173" \
   ticket-service:1.0.0
 ```
 
 Распределённый кэш на Redis (опционально): `docker compose --profile cache up -d`
-и `REDIS_URL=redis://redis:6379/0` в окружении сервиса.
+и `REDIS_URL=redis://redis:6379/0` в `.env`.
+
+### Деплой на VPS (доступ из интернета + фронт)
+
+Краткая схема — подробности в [`deploy/VPS.md`](deploy/VPS.md):
+
+```bash
+cp .env.example .env
+# POSTGRES_PASSWORD, TICKETS_API_KEY, CORS_ORIGINS, PUBLIC_BASE_URL
+docker compose up -d --build
+# API: http://YOUR_VPS_IP:8080  |  docs: http://YOUR_VPS_IP:8080/docs
+```
+
+С доменом и HTTPS:
+
+```bash
+# в .env: DOMAIN=api.example.com  PUBLIC_BASE_URL=https://api.example.com
+#         CORS_ORIGINS=https://your-frontend.example.com
+docker compose --profile https up -d --build
+```
+
+С фронта на каждый запрос передавайте заголовки `X-API-Key`, `X-User-Id`, `X-Role`.
+`CORS_ORIGINS` должен совпадать с origin фронта (схема + хост + порт).
 
 ### Вариант 2 — локально без Docker
 
@@ -86,12 +126,15 @@ TICKETS_DATABASE_URL=memory python run.py
 
 | Переменная | Описание | По умолчанию |
 |---|---|---|
-| `TICKETS_DATABASE_URL` | строка подключения к PostgreSQL | `postgresql://tickets_app:tickets_pass@127.0.0.1:5432/tickets_db` |
+| `TICKETS_DATABASE_URL` | строка подключения к PostgreSQL | `postgresql+psycopg2://…@127.0.0.1:5432/tickets_db` |
+| `TICKETS_PORT` | порт HTTP API | `8080` |
+| `CORS_ORIGINS` | origin фронта через запятую или `*` | `*` |
+| `PUBLIC_BASE_URL` | публичный URL (для Swagger) | пусто / localhost |
 | `ACCESS_CONTROL_URL` | адрес модуля прав доступа (если пуст - встроенный stub) | пусто |
 | `ACCESS_CONTROL_API_KEY` | ключ сервиса для обращений к модулю прав | `service-secret-key` |
 | `TICKETS_API_KEY` | ключ для обращений клиентов к этому API | `gateway-secret-key` |
 | `SEED_DEMO_DATA` | `1` - загрузить демо-пользователей | `1` |
-
+| `DOMAIN` | домен для Caddy HTTPS | — |
 ## Аутентификация и авторизация
 
 Клиент (API-шлюз / фронтенд) передаёт заголовки:
@@ -112,6 +155,7 @@ X-Role: MANAGER                    # роль, выданная модулем �
 | Метод | Путь | Назначение |
 |---|---|---|
 | GET | `/health` | состояние сервиса и БД |
+| GET | `/api/v1/health` | то же (алиас) |
 | POST | `/api/v1/tickets` | создать заявку (из предупреждения объекта) |
 | GET | `/api/v1/tickets` | список заявок с фильтрами/пагинацией |
 | GET | `/api/v1/tickets/{id}` | карточка заявки |
