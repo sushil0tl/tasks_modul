@@ -47,8 +47,8 @@ ticket_service/
 
 ```bash
 docker compose up -d --build     # БД + сервис в одном стенде
-curl http://localhost:8080/api/v1/health
-# Swagger UI: http://localhost:8080/docs
+curl http://localhost:9090/health
+# Swagger UI: http://localhost:9090/docs
 docker compose down -v           # остановить и удалить том с данными
 ```
 
@@ -56,8 +56,8 @@ docker compose down -v           # остановить и удалить том
 
 ```bash
 docker build -t ticket-service:1.0.0 .
-docker run -d --name ticket-service -p 8080:8080 \
-  -e TICKETS_DATABASE_URL="postgresql+psycopg2://tickets_app:tickets_pass@host.docker.internal:5432/tickets_db" \
+docker run -d --name ticket-service -p 9090:9090 \
+  -e TICKETS_DATABASE_URL="postgresql+psycopg2://tickets_app:tickets_pass@host.docker.internal:5433/tickets_db" \
   ticket-service:1.0.0
 ```
 
@@ -72,8 +72,8 @@ pip install -r requirements.txt
 # подготовить БД (PostgreSQL должен быть запущен)
 psql "$TICKETS_DATABASE_URL" -f db/schema.sql
 
-python run.py            # http://127.0.0.1:8080
-# интерактивная документация: http://127.0.0.1:8080/docs
+python run.py            # http://127.0.0.1:9090
+# интерактивная документация: http://127.0.0.1:9090/docs
 ```
 
 Быстрый старт без PostgreSQL (in-memory хранилище, только для разработки):
@@ -86,7 +86,7 @@ TICKETS_DATABASE_URL=memory python run.py
 
 | Переменная | Описание | По умолчанию |
 |---|---|---|
-| `TICKETS_DATABASE_URL` | строка подключения к PostgreSQL | `postgresql://tickets_app:tickets_pass@127.0.0.1:5432/tickets_db` |
+| `TICKETS_DATABASE_URL` | строка подключения к PostgreSQL (порт БД — нестандартный **5433**) | `postgresql://tickets_app:tickets_pass@127.0.0.1:5433/tickets_db` |
 | `ACCESS_CONTROL_URL` | адрес модуля прав доступа (если пуст - встроенный stub) | пусто |
 | `ACCESS_CONTROL_API_KEY` | ключ сервиса для обращений к модулю прав | `service-secret-key` |
 | `TICKETS_API_KEY` | ключ для обращений клиентов к этому API | `gateway-secret-key` |
@@ -146,9 +146,9 @@ docker compose up -d --build
 ### Шаг 2. Открыть интерактивную документацию в браузере
 | Адрес | Что там |
 |---|---|
-| `http://localhost:8080/docs` | **Swagger UI** — можно просматривать эндпоинты и дёргать их кнопкой «Try it out» |
-| `http://localhost:8080/redoc` | **ReDoc** — читаемое справочное описание (схемы, поля, примеры) |
-| `http://localhost:8080/openapi.json` | сырая OpenAPI 3.1 спецификация (для Postman/Insomnia/editor.swagger.io) |
+| `http://localhost:9090/docs` | **Swagger UI** — можно просматривать эндпоинты и дёргать их кнопкой «Try it out» |
+| `http://localhost:9090/redoc` | **ReDoc** — читаемое справочное описание (схемы, поля, примеры) |
+| `http://localhost:9090/openapi.json` | сырая OpenAPI 3.1 спецификация (для Postman/Insomnia/editor.swagger.io) |
 
 ### Шаг 3. Авторизоваться в Swagger UI
 Нажмите кнопку **Authorize** (вверху справа) и заполните:

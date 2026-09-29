@@ -38,13 +38,13 @@ class Settings(BaseSettings):
         validation_alias=AliasChoices("TICKETS_HOST", "tickets_host"),
     )
     tickets_port: int = Field(
-        default=8080,
+        default=9090,
         validation_alias=AliasChoices("TICKETS_PORT", "tickets_port"),
     )
 
     # --- Хранилище ------------------------------------------------------------
     database_url: str = Field(
-        default="postgresql+psycopg2://tickets_app:tickets_pass@127.0.0.1:5432/tickets_db",
+        default="postgresql+psycopg2://tickets_app:tickets_pass@127.0.0.1:5433/tickets_db",
         validation_alias=AliasChoices("TICKETS_DATABASE_URL", "database_url"),
     )
     db_pool_size: int = 5

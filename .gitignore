@@ -1,6 +1,7 @@
-# Compiled and build artifacts
+# Compiled/Binary files
 __pycache__/
 *.pyc
 
-# Logs
+# Logs and temp files
 logs/
+*.log
