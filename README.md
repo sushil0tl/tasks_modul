@@ -131,3 +131,35 @@ X-Role: MANAGER                    # роль, выданная модулем �
 ```bash
 pytest -q            # unit-тесты (in-memory репозиторий + mock модуля прав)
 ```
+
+## Swagger / OpenAPI — как посмотреть пошагово
+
+### Шаг 1. Запустить сервис
+```bash
+# без PostgreSQL (in-memory, для разработки/демо):
+TICKETS_DATABASE_URL=memory python run.py
+
+# или через Docker:
+docker compose up -d --build
+```
+
+### Шаг 2. Открыть интерактивную документацию в браузере
+| Адрес | Что там |
+|---|---|
+| `http://localhost:8080/docs` | **Swagger UI** — можно просматривать эндпоинты и дёргать их кнопкой «Try it out» |
+| `http://localhost:8080/redoc` | **ReDoc** — читаемое справочное описание (схемы, поля, примеры) |
+| `http://localhost:8080/openapi.json` | сырая OpenAPI 3.1 спецификация (для Postman/Insomnia/editor.swagger.io) |
+
+### Шаг 3. Авторизоваться в Swagger UI
+Нажмите кнопку **Authorize** (вверху справа) и заполните:
+- `ApiKeyAuth` (X-API-Key): `gateway-secret-key` (значение `TICKETS_API_KEY`);
+- `UserHeaderAuth` (X-User-Id): ID пользователя, например `admin-001`, `manager-001`, `engineer-001` (роль определяется модулем прав доступа).
+
+После этого все запросы из UI будут отправляться с нужными заголовками.
+
+### Шаг 4. Посмотреть офлайн (без запущенного сервиса)
+В корне проекта лежит актуальный дамп спецификации — **`openapi.json`** (19 эндпоинтов).
+Варианты просмотра:
+- открыть на https://editor.swagger.io (File → Import);
+- импортировать в Postman/Insomnia;
+- локально: `npx @redocly/cli preview-docs openapi.json`.
