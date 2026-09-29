@@ -275,3 +275,53 @@ components.schemas.TicketDTO.Reference.$ref
 2026-09-29 11:39:15 INFO    [ticket_service] Logging configured: level=INFO file=logs/ticket_service.log json=False audit=True
 2026-09-29 11:39:19 INFO    [ticket_service] Logging configured: level=INFO file=logs/ticket_service.log json=False audit=True
 2026-09-29 11:45:13 INFO    [ticket_service] Logging configured: level=INFO file=logs/ticket_service.log json=False audit=True
+2026-09-29 12:22:08 INFO    [ticket_service] Logging configured: level=INFO file=logs/ticket_service.log json=False audit=True
+2026-09-29 12:22:13 INFO    [ticket_service] Logging configured: level=INFO file=logs/ticket_service.log json=False audit=True
+2026-09-29 12:22:13 WARNING [app.auth.access_control] ACCESS_CONTROL_URL не задан - используется встроенный stub (только для разработки!)
+2026-09-29 12:22:13 INFO    [app.database] Database engine created (postgresql+psycopg2://tickets_app:***@127.0.0.1:5432/tickets_db)
+2026-09-29 12:22:13 ERROR   [ticket_service] PostgreSQL недоступен ((psycopg2.OperationalError) connection to server at "127.0.0.1", port 5432 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+
+(Background on this error at: https://sqlalche.me/e/21/e3q8))
+2026-09-29 12:22:31 INFO    [ticket_service] Logging configured: level=INFO file=logs/ticket_service.log json=False audit=True
+2026-09-29 12:22:31 WARNING [app.auth.access_control] ACCESS_CONTROL_URL не задан - используется встроенный stub (только для разработки!)
+2026-09-29 12:22:31 WARNING [ticket_service] TICKETS_DATABASE_URL=memory -> in-memory хранилище (только для разработки)
+2026-09-29 12:22:31 INFO    [ticket_service] Seeded 5 demo users into справочник
+2026-09-29 12:22:31 INFO    [ticket_service] Dependencies ready: storage=InMemoryTicketRepository cache=memory notifications=on
+2026-09-29 12:22:31 INFO    [ticket_service] Ticket service started (storage=InMemoryTicketRepository)
+2026-09-29 12:22:38 INFO    [ticket_service.access] request_id=08b76fcfd89f GET /health -> 200 in 2.5 ms
+2026-09-29 12:22:38 INFO    [ticket_service.access] request_id=d97f0b69d03f GET /docs -> 200 in 0.3 ms
+2026-09-29 12:22:38 INFO    [ticket_service.access] request_id=37e92fc4dd3a GET /api/v1/tickets/stages -> 401 in 0.9 ms
+2026-09-29 12:22:42 INFO    [ticket_service.access] request_id=36dd8c2d79e9 GET /api/v1/tickets/stages -> 200 in 1.2 ms
+2026-09-29 12:22:42 INFO    [ticket_service.access] request_id=b28efe1113da GET /api/v1/tickets -> 200 in 2.1 ms
+2026-09-29 12:22:45 INFO    [ticket_service] Ticket service stopped
+2026-09-29 12:23:29 INFO    [ticket_service] Logging configured: level=INFO file=logs/ticket_service.log json=False audit=True
+2026-09-29 12:23:29 WARNING [app.auth.access_control] ACCESS_CONTROL_URL не задан - используется встроенный stub (только для разработки!)
+2026-09-29 12:23:29 WARNING [ticket_service] TICKETS_DATABASE_URL=memory -> in-memory хранилище (только для разработки)
+2026-09-29 12:23:29 INFO    [ticket_service] Seeded 5 demo users into справочник
+2026-09-29 12:23:29 INFO    [ticket_service] Dependencies ready: storage=InMemoryTicketRepository cache=memory notifications=on
+2026-09-29 12:23:29 INFO    [ticket_service] Ticket service started (storage=InMemoryTicketRepository)
+2026-09-29 12:23:32 INFO    [ticket_service.access] request_id=571a33cc9de9 GET /health -> 200 in 1.4 ms
+2026-09-29 12:23:34 INFO    [ticket_service.access] request_id=9f2a212c2d3a GET /api/v1/tickets -> 401 in 0.8 ms
+2026-09-29 12:23:45 WARNING [app.auth.access_control] Unknown user '1' requested - treated as OBSERVER
+2026-09-29 12:23:45 WARNING [app.auth.access_control] Unknown user '1' requested - treated as OBSERVER
+2026-09-29 12:23:45 INFO    [ticket_service.access] request_id=daad850d8305 GET /api/v1/tickets -> 200 in 2.6 ms
+2026-09-29 12:26:56 INFO    [ticket_service] Logging configured: level=INFO file=logs/ticket_service.log json=False audit=True
+2026-09-29 12:26:56 WARNING [app.auth.access_control] ACCESS_CONTROL_URL не задан - используется встроенный stub (только для разработки!)
+2026-09-29 12:26:56 WARNING [ticket_service] TICKETS_DATABASE_URL=memory -> in-memory хранилище (только для разработки)
+2026-09-29 12:26:56 INFO    [ticket_service] Seeded 5 demo users into справочник
+2026-09-29 12:26:56 INFO    [ticket_service] Dependencies ready: storage=InMemoryTicketRepository cache=memory notifications=on
+2026-09-29 12:26:56 INFO    [ticket_service] Ticket service started (storage=InMemoryTicketRepository)
+2026-09-29 12:26:56 INFO    [ticket_service] Ticket service stopped
+2026-09-29 12:26:58 INFO    [ticket_service.access] request_id=0118eb2adbb5 GET /health -> 200 in 0.8 ms
+2026-09-29 12:27:04 INFO    [ticket_service] Ticket service stopped
+2026-09-29 12:27:06 INFO    [ticket_service] Logging configured: level=INFO file=logs/ticket_service.log json=False audit=True
+2026-09-29 12:27:06 WARNING [app.auth.access_control] ACCESS_CONTROL_URL не задан - используется встроенный stub (только для разработки!)
+2026-09-29 12:27:06 WARNING [ticket_service] TICKETS_DATABASE_URL=memory -> in-memory хранилище (только для разработки)
+2026-09-29 12:27:06 INFO    [ticket_service] Seeded 5 demo users into справочник
+2026-09-29 12:27:06 INFO    [ticket_service] Dependencies ready: storage=InMemoryTicketRepository cache=memory notifications=on
+2026-09-29 12:27:06 INFO    [ticket_service] Ticket service started (storage=InMemoryTicketRepository)
+2026-09-29 12:27:08 INFO    [ticket_service.access] request_id=83ee635d80e7 GET /health -> 200 in 1.2 ms
+2026-09-29 12:27:08 WARNING [app.auth.access_control] Unknown user 'admin' requested - treated as OBSERVER
+2026-09-29 12:27:08 WARNING [app.auth.access_control] Unknown user 'admin' requested - treated as OBSERVER
+2026-09-29 12:27:08 INFO    [ticket_service.access] request_id=f6edc06fea30 GET /api/v1/tickets -> 200 in 2.3 ms
