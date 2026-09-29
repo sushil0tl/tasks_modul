@@ -38,7 +38,7 @@ class Settings(BaseSettings):
         validation_alias=AliasChoices("TICKETS_HOST", "tickets_host"),
     )
     tickets_port: int = Field(
-        default=9081,
+        default=8081,
         validation_alias=AliasChoices("TICKETS_PORT", "tickets_port"),
     )
 

@@ -6,7 +6,7 @@
 # образ попадают только установленные пакеты и код приложения.
 #
 # Сборка:  docker build -t ticket-service:1.0.0 .
-# Запуск:  docker run -d --name ticket-service -p 9081:9081 \
+# Запуск:  docker run -d --name ticket-service -p 8081:8081 \
 #            -e TICKETS_DATABASE_URL=postgresql+psycopg2://tickets_app:tickets_pass@db:5433/tickets_db \
 #            ticket-service:1.0.0
 # ============================================================================
@@ -44,7 +44,7 @@ ENV PYTHONUNBUFFERED=1 \
     PATH="/opt/venv/bin:$PATH" \
     # host/port HTTP-сервера внутри контейнера (переопределяются через -e)
     TICKETS_HOST=0.0.0.0 \
-    TICKETS_PORT=9081
+    TICKETS_PORT=8081
 
 # Только минимально необходимые системные пакеты:
 # curl — healthcheck, libpq5 — драйвер psycopg2-binary
@@ -71,10 +71,10 @@ RUN mkdir -p logs && chown -R appuser:appuser /srv/ticket-service
 
 USER appuser
 
-EXPOSE 9081
+EXPOSE 8081
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
-    CMD curl -fsS http://localhost:9081/health || exit 1
+    CMD curl -fsS http://localhost:8081/health || exit 1
 
 # Uvicorn поднимает несколько воркеров; graceful shutdown за 25 секунд
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "9081", "--workers", "2"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8081", "--workers", "2"]

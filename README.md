@@ -47,8 +47,8 @@ ticket_service/
 
 ```bash
 docker compose up -d --build     # БД + сервис в одном стенде
-curl http://localhost:9081/health
-# Swagger UI: http://localhost:9081/docs
+curl http://localhost:8081/health
+# Swagger UI: http://localhost:8081/docs
 docker compose down -v           # остановить и удалить том с данными
 ```
 
@@ -56,7 +56,7 @@ docker compose down -v           # остановить и удалить том
 
 ```bash
 docker build -t ticket-service:1.0.0 .
-docker run -d --name ticket-service -p 9081:9081 \
+docker run -d --name ticket-service -p 8081:8081 \
   -e TICKETS_DATABASE_URL="postgresql+psycopg2://tickets_app:tickets_pass@host.docker.internal:5433/tickets_db" \
   ticket-service:1.0.0
 ```
@@ -72,8 +72,8 @@ pip install -r requirements.txt
 # подготовить БД (PostgreSQL должен быть запущен)
 psql "$TICKETS_DATABASE_URL" -f db/schema.sql
 
-python run.py            # http://127.0.0.1:9081
-# интерактивная документация: http://127.0.0.1:9081/docs
+python run.py            # http://127.0.0.1:8081
+# интерактивная документация: http://127.0.0.1:8081/docs
 ```
 
 Быстрый старт без PostgreSQL (in-memory хранилище, только для разработки):
@@ -146,9 +146,9 @@ docker compose up -d --build
 ### Шаг 2. Открыть интерактивную документацию в браузере
 | Адрес | Что там |
 |---|---|
-| `http://localhost:9081/docs` | **Swagger UI** — можно просматривать эндпоинты и дёргать их кнопкой «Try it out» |
-| `http://localhost:9081/redoc` | **ReDoc** — читаемое справочное описание (схемы, поля, примеры) |
-| `http://localhost:9081/openapi.json` | сырая OpenAPI 3.1 спецификация (для Postman/Insomnia/editor.swagger.io) |
+| `http://localhost:8081/docs` | **Swagger UI** — можно просматривать эндпоинты и дёргать их кнопкой «Try it out» |
+| `http://localhost:8081/redoc` | **ReDoc** — читаемое справочное описание (схемы, поля, примеры) |
+| `http://localhost:8081/openapi.json` | сырая OpenAPI 3.1 спецификация (для Postman/Insomnia/editor.swagger.io) |
 
 ### Шаг 3. Авторизоваться в Swagger UI
 Нажмите кнопку **Authorize** (вверху справа) и заполните:
