@@ -1,0 +1,17 @@
+nohup: ignoring input
+2026-09-29 12:27:06 INFO    [ticket_service] Logging configured: level=INFO file=logs/ticket_service.log json=False audit=True
+INFO:     Started server process [1260]
+INFO:     Waiting for application startup.
+2026-09-29 12:27:06 WARNING [app.auth.access_control] ACCESS_CONTROL_URL не задан - используется встроенный stub (только для разработки!)
+2026-09-29 12:27:06 WARNING [ticket_service] TICKETS_DATABASE_URL=memory -> in-memory хранилище (только для разработки)
+2026-09-29 12:27:06 INFO    [ticket_service] Seeded 5 demo users into справочник
+2026-09-29 12:27:06 INFO    [ticket_service] Dependencies ready: storage=InMemoryTicketRepository cache=memory notifications=on
+2026-09-29 12:27:06 INFO    [ticket_service] Ticket service started (storage=InMemoryTicketRepository)
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8080 (Press CTRL+C to quit)
+2026-09-29 12:27:08 INFO    [ticket_service.access] request_id=83ee635d80e7 GET /health -> 200 in 1.2 ms
+INFO:     127.0.0.1:44326 - "GET /health HTTP/1.1" 200 OK
+2026-09-29 12:27:08 WARNING [app.auth.access_control] Unknown user 'admin' requested - treated as OBSERVER
+2026-09-29 12:27:08 WARNING [app.auth.access_control] Unknown user 'admin' requested - treated as OBSERVER
+2026-09-29 12:27:08 INFO    [ticket_service.access] request_id=f6edc06fea30 GET /api/v1/tickets -> 200 in 2.3 ms
+INFO:     127.0.0.1:44328 - "GET /api/v1/tickets HTTP/1.1" 200 OK
