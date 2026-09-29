@@ -145,11 +145,20 @@ class TicketService:
         placed_at = payload.created_at or _now()
         if placed_at.tzinfo is None:
             placed_at = placed_at.replace(tzinfo=timezone.utc)
-        if payload.due_date and payload.due_date < placed_at.astimezone(timezone.utc).date():
+        # «сегодня» считаем в часовом поясе даты постановки (по умолчанию — UTC now):
+        # иначе заявка, поставленная «задним числом», получает некоррежный якорь
+        anchor_local = placed_at.astimezone(placed_at.tzinfo)
+        if payload.due_date and payload.due_date < anchor_local.date():
             raise ValidationError(
                 "Дата исполнения не может быть раньше даты постановки",
                 due_date=str(payload.due_date),
                 created_at=placed_at.isoformat(),
+            )
+        if payload.due_date and anchor_local.date() >= date.today() and payload.due_date < date.today():
+            raise ValidationError(
+                "Дата исполнения не может быть в прошлом",
+                due_date=str(payload.due_date),
+                today=date.today().isoformat(),
             )
 
         self._check_people_conflicts(author_id, assignees, watchers)
@@ -369,12 +378,22 @@ class TicketService:
 
         final_due = changes.get("due_date", record.get("due_date"))
         placed_at = record.get("created_at")
-        if final_due is not None and placed_at is not None and final_due < placed_at.date():
-            raise ValidationError(
-                "Дата исполнения не может быть раньше даты постановки",
-                due_date=str(final_due),
-                created_at=placed_at.date().isoformat(),
-            )
+        if final_due is not None and placed_at is not None:
+            # якорь «сегодня» — в часовом поясе даты постановки (для naive считаем UTC)
+            anchor = placed_at if placed_at.tzinfo else placed_at.replace(tzinfo=timezone.utc)
+            anchor_local = anchor.astimezone(anchor.tzinfo)
+            if final_due < anchor_local.date():
+                raise ValidationError(
+                    "Дата исполнения не может быть раньше даты постановки",
+                    due_date=str(final_due),
+                    created_at=anchor_local.date().isoformat(),
+                )
+            if anchor_local.date() >= date.today() and final_due < date.today():
+                raise ValidationError(
+                    "Дата исполнения не может быть в прошлом",
+                    due_date=str(final_due),
+                    today=date.today().isoformat(),
+                )
 
         # исполнители обязаны быть известны системе (чтобы карточка показывала ФИО)
         for user_id in list(final_assignees) + list(final_watchers) + [final_author]:

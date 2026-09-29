@@ -2,9 +2,12 @@
 # Локальный стенд микросервиса заявок: PostgreSQL + Ticket Service (+ Redis опц.)
 #
 # Запуск:            docker compose up -d --build
-# Проверка:          curl http://localhost:8080/api/v1/health
-# Swagger UI:        http://localhost:8080/docs
+# Проверка:          curl http://localhost:8081/health
+# Swagger UI:        http://localhost:8081/docs
 # Остановка/очистка: docker compose down -v
+#
+# ВАЖНО: PostgreSQL использует НЕСТАНДАРТНЫЙ порт 5433 (вместо 5432) —
+#        снаружи и изнутри контейнера. Подключение: postgresql://...@host:5433/tickets_db
 # ============================================================================
 
 services:
@@ -15,14 +18,18 @@ services:
       POSTGRES_DB: tickets_db
       POSTGRES_USER: tickets_app
       POSTGRES_PASSWORD: tickets_pass
+      # Нестандартный порт PostgreSQL (вместо стандартного 5432)
+      PGPORT: "5433"
+    command: ["postgres", "-p", "5433"]
     volumes:
       - pgdata:/var/lib/postgresql/data
       # Схема применяется при первом старте тома (AUTO_CREATE_SCHEMA можно выключить)
       - ./db/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
     ports:
-      - "5432:5432"
+      # хост:5433 -> контейнер:5433 (оба нестандартные, чтобы не пересекаться с локальным PostgreSQL)
+      - "5433:5433"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U tickets_app -d tickets_db"]
+      test: ["CMD-SHELL", "pg_isready -U tickets_app -d tickets_db -p 5433"]
       interval: 5s
       timeout: 3s
       retries: 10
@@ -46,9 +53,9 @@ services:
       db:
         condition: service_healthy
     environment:
-      TICKETS_DATABASE_URL: postgresql+psycopg2://tickets_app:tickets_pass@db:5432/tickets_db
+      TICKETS_DATABASE_URL: postgresql+psycopg2://tickets_app:tickets_pass@db:5433/tickets_db
       TICKETS_HOST: 0.0.0.0
-      TICKETS_PORT: "8080"
+      TICKETS_PORT: "8081"
       TICKETS_API_KEY: gateway-secret-key
       ACCESS_CONTROL_API_KEY: service-secret-key
       ACCESS_CONTROL_URL: ""          # пусто -> встроенный dev-клиент прав доступа
@@ -61,7 +68,7 @@ services:
       NOTIFICATIONS_ENABLED: "1"
       NOTIFICATION_WEBHOOK_URL: ""
     ports:
-      - "8080:8080"
+      - "8081:8081"
     volumes:
       - ./logs:/srv/ticket-service/logs
     restart: unless-stopped

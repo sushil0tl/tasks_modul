@@ -47,8 +47,8 @@ ticket_service/
 
 ```bash
 docker compose up -d --build     # БД + сервис в одном стенде
-curl http://localhost:8080/api/v1/health
-# Swagger UI: http://localhost:8080/docs
+curl http://localhost:8081/health
+# Swagger UI: http://localhost:8081/docs
 docker compose down -v           # остановить и удалить том с данными
 ```
 
@@ -56,8 +56,8 @@ docker compose down -v           # остановить и удалить том
 
 ```bash
 docker build -t ticket-service:1.0.0 .
-docker run -d --name ticket-service -p 8080:8080 \
-  -e TICKETS_DATABASE_URL="postgresql+psycopg2://tickets_app:tickets_pass@host.docker.internal:5432/tickets_db" \
+docker run -d --name ticket-service -p 8081:8081 \
+  -e TICKETS_DATABASE_URL="postgresql+psycopg2://tickets_app:tickets_pass@host.docker.internal:5433/tickets_db" \
   ticket-service:1.0.0
 ```
 
@@ -72,8 +72,8 @@ pip install -r requirements.txt
 # подготовить БД (PostgreSQL должен быть запущен)
 psql "$TICKETS_DATABASE_URL" -f db/schema.sql
 
-python run.py            # http://127.0.0.1:8080
-# интерактивная документация: http://127.0.0.1:8080/docs
+python run.py            # http://127.0.0.1:8081
+# интерактивная документация: http://127.0.0.1:8081/docs
 ```
 
 Быстрый старт без PostgreSQL (in-memory хранилище, только для разработки):
@@ -86,7 +86,7 @@ TICKETS_DATABASE_URL=memory python run.py
 
 | Переменная | Описание | По умолчанию |
 |---|---|---|
-| `TICKETS_DATABASE_URL` | строка подключения к PostgreSQL | `postgresql://tickets_app:tickets_pass@127.0.0.1:5432/tickets_db` |
+| `TICKETS_DATABASE_URL` | строка подключения к PostgreSQL (порт БД — нестандартный **5433**) | `postgresql://tickets_app:tickets_pass@127.0.0.1:5433/tickets_db` |
 | `ACCESS_CONTROL_URL` | адрес модуля прав доступа (если пуст - встроенный stub) | пусто |
 | `ACCESS_CONTROL_API_KEY` | ключ сервиса для обращений к модулю прав | `service-secret-key` |
 | `TICKETS_API_KEY` | ключ для обращений клиентов к этому API | `gateway-secret-key` |
@@ -131,3 +131,35 @@ X-Role: MANAGER                    # роль, выданная модулем �
 ```bash
 pytest -q            # unit-тесты (in-memory репозиторий + mock модуля прав)
 ```
+
+## Swagger / OpenAPI — как посмотреть пошагово
+
+### Шаг 1. Запустить сервис
+```bash
+# без PostgreSQL (in-memory, для разработки/демо):
+TICKETS_DATABASE_URL=memory python run.py
+
+# или через Docker:
+docker compose up -d --build
+```
+
+### Шаг 2. Открыть интерактивную документацию в браузере
+| Адрес | Что там |
+|---|---|
+| `http://localhost:8081/docs` | **Swagger UI** — можно просматривать эндпоинты и дёргать их кнопкой «Try it out» |
+| `http://localhost:8081/redoc` | **ReDoc** — читаемое справочное описание (схемы, поля, примеры) |
+| `http://localhost:8081/openapi.json` | сырая OpenAPI 3.1 спецификация (для Postman/Insomnia/editor.swagger.io) |
+
+### Шаг 3. Авторизоваться в Swagger UI
+Нажмите кнопку **Authorize** (вверху справа) и заполните:
+- `ApiKeyAuth` (X-API-Key): `gateway-secret-key` (значение `TICKETS_API_KEY`);
+- `UserHeaderAuth` (X-User-Id): ID пользователя, например `admin-001`, `manager-001`, `engineer-001` (роль определяется модулем прав доступа).
+
+После этого все запросы из UI будут отправляться с нужными заголовками.
+
+### Шаг 4. Посмотреть офлайн (без запущенного сервиса)
+В корне проекта лежит актуальный дамп спецификации — **`openapi.json`** (19 эндпоинтов).
+Варианты просмотра:
+- открыть на https://editor.swagger.io (File → Import);
+- импортировать в Postman/Insomnia;
+- локально: `npx @redocly/cli preview-docs openapi.json`.

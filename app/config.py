@@ -8,15 +8,22 @@ from __future__ import annotations
 
 from functools import lru_cache
 
+from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    """Конфигурация сервиса (ENV > .env > значения по умолчанию)."""
+    """Конфигурация сервиса (ENV > .env > значения по умолчанию).
+
+    Для исторических переменных окружения с префиксом ``TICKETS_``
+    (``TICKETS_DATABASE_URL``, ``TICKETS_API_KEY``, ``TICKETS_HOST``,
+    ``TICKETS_PORT``) добавлены алиасы — обе формы читаются одинаково.
+    """
 
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
+        case_sensitive=False,
         extra="ignore",
     )
 
@@ -26,12 +33,19 @@ class Settings(BaseSettings):
     api_prefix: str = "/api/v1"
 
     # --- HTTP-сервер ---------------------------------------------------------
-    tickets_host: str = "0.0.0.0"
-    tickets_port: int = 8080
+    tickets_host: str = Field(
+        default="0.0.0.0",
+        validation_alias=AliasChoices("TICKETS_HOST", "tickets_host"),
+    )
+    tickets_port: int = Field(
+        default=8081,
+        validation_alias=AliasChoices("TICKETS_PORT", "tickets_port"),
+    )
 
     # --- Хранилище ------------------------------------------------------------
-    database_url: str = (
-        "postgresql+psycopg2://tickets_app:tickets_pass@127.0.0.1:5432/tickets_db"
+    database_url: str = Field(
+        default="postgresql+psycopg2://tickets_app:tickets_pass@127.0.0.1:5433/tickets_db",
+        validation_alias=AliasChoices("TICKETS_DATABASE_URL", "database_url"),
     )
     db_pool_size: int = 5
     db_max_overflow: int = 10
@@ -41,7 +55,10 @@ class Settings(BaseSettings):
 
     # --- Ключи ----------------------------------------------------------------
     #: ключ вызывающей стороны (API-шлюз / фронтенд) для обращений к этому API
-    tickets_api_key: str = "gateway-secret-key"
+    tickets_api_key: str = Field(
+        default="gateway-secret-key",
+        validation_alias=AliasChoices("TICKETS_API_KEY", "tickets_api_key"),
+    )
     #: ключ, которым сервис подписывает запросы в модуль прав доступа
     access_control_api_key: str = "service-secret-key"
 
