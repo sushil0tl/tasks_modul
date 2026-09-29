@@ -1,0 +1,237 @@
+2026-09-27 20:13:18 INFO    [ticket_service] Logging configured: level=INFO file=logs/ticket_service.log json=False audit=True
+2026-09-27 20:13:33 INFO    [ticket_service] Logging configured: level=INFO file=logs/ticket_service.log json=False audit=True
+2026-09-27 20:13:39 INFO    [ticket_service] Logging configured: level=INFO file=logs/ticket_service.log json=False audit=True
+2026-09-27 20:13:43 INFO    [ticket_service] Logging configured: level=INFO file=logs/ticket_service.log json=False audit=True
+2026-09-27 20:16:49 INFO    [ticket_service] Logging configured: level=INFO file=logs/ticket_service.log json=False audit=True
+2026-09-27 20:17:26 INFO    [ticket_service] Logging configured: level=INFO file=logs/ticket_service.log json=False audit=True
+2026-09-27 20:18:27 INFO    [ticket_service] Logging configured: level=INFO file=logs/ticket_service.log json=False audit=True
+2026-09-27 20:19:50 INFO    [ticket_service] Logging configured: level=INFO file=logs/ticket_service.log json=False audit=True
+2026-09-28 16:14:48 INFO    [ticket_service] Logging configured: level=INFO file=logs/ticket_service.log json=False audit=True
+2026-09-29 11:15:54 INFO    [ticket_service] Logging configured: level=INFO file=logs/ticket_service.log json=False audit=True
+2026-09-29 11:16:00 INFO    [ticket_service] Logging configured: level=INFO file=logs/ticket_service.log json=False audit=True
+2026-09-29 11:16:00 WARNING [app.auth.access_control] ACCESS_CONTROL_URL не задан - используется встроенный stub (только для разработки!)
+2026-09-29 11:16:00 INFO    [app.database] Database engine created (postgresql+psycopg2://tickets_app:***@127.0.0.1:5432/tickets_db)
+2026-09-29 11:16:00 ERROR   [ticket_service] PostgreSQL недоступен ((psycopg2.OperationalError) connection to server at "127.0.0.1", port 5432 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+
+(Background on this error at: https://sqlalche.me/e/21/e3q8))
+2026-09-29 11:16:13 INFO    [ticket_service] Logging configured: level=INFO file=logs/ticket_service.log json=False audit=True
+2026-09-29 11:16:13 WARNING [app.auth.access_control] ACCESS_CONTROL_URL не задан - используется встроенный stub (только для разработки!)
+2026-09-29 11:16:13 INFO    [app.database] Database engine created (postgresql+psycopg2://tickets_app:***@127.0.0.1:5432/tickets_db)
+2026-09-29 11:16:13 ERROR   [ticket_service] PostgreSQL недоступен ((psycopg2.OperationalError) connection to server at "127.0.0.1", port 5432 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+
+(Background on this error at: https://sqlalche.me/e/21/e3q8))
+2026-09-29 11:16:24 INFO    [ticket_service] Logging configured: level=INFO file=logs/ticket_service.log json=False audit=True
+2026-09-29 11:16:24 WARNING [app.auth.access_control] ACCESS_CONTROL_URL не задан - используется встроенный stub (только для разработки!)
+2026-09-29 11:16:24 WARNING [ticket_service] TICKETS_DATABASE_URL=memory -> in-memory хранилище (только для разработки)
+2026-09-29 11:16:24 INFO    [ticket_service] Seeded 5 demo users into справочник
+2026-09-29 11:16:24 INFO    [ticket_service] Dependencies ready: storage=InMemoryTicketRepository cache=memory notifications=on
+2026-09-29 11:16:24 INFO    [ticket_service] Ticket service started (storage=InMemoryTicketRepository)
+2026-09-29 11:16:24 ERROR   [ticket_service.access] request_id=df070ab1eebd GET /openapi.json FAILED after 34.6 ms
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.12/site-packages/starlette/middleware/base.py", line 151, in call_next
+    message = await recv_stream.receive()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/site-packages/anyio/streams/memory.py", line 111, in receive
+    return self.receive_nowait()
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/site-packages/anyio/streams/memory.py", line 104, in receive_nowait
+    raise EndOfStream
+anyio.EndOfStream
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/app/main.py", line 177, in _log_requests
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/site-packages/starlette/middleware/base.py", line 159, in call_next
+    raise app_exc
+  File "/usr/local/lib/python3.12/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/usr/local/lib/python3.12/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/usr/local/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/usr/local/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/usr/local/lib/python3.12/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/usr/local/lib/python3.12/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/usr/local/lib/python3.12/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/usr/local/lib/python3.12/site-packages/starlette/routing.py", line 78, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/usr/local/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/usr/local/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/usr/local/lib/python3.12/site-packages/starlette/routing.py", line 75, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/site-packages/fastapi/applications.py", line 1009, in openapi
+    return JSONResponse(self.openapi())
+                        ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/site-packages/fastapi/applications.py", line 981, in openapi
+    self.openapi_schema = get_openapi(
+                          ^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/site-packages/fastapi/openapi/utils.py", line 569, in get_openapi
+    return jsonable_encoder(OpenAPI(**output), by_alias=True, exclude_none=True)  # type: ignore
+                            ^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/site-packages/pydantic/main.py", line 253, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pydantic_core._pydantic_core.ValidationError: 2 validation errors for OpenAPI
+components.schemas.TicketDTO.Schema.title
+  Input should be a valid string [type=string_type, input_value={'validate_default': False}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/string_type
+components.schemas.TicketDTO.Reference.$ref
+  Field required [type=missing, input_value={'description': 'Заяв...alse}, 'type': 'object'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
+2026-09-29 11:16:24 ERROR   [ticket_service] Unhandled error on GET /openapi.json
+  + Exception Group Traceback (most recent call last):
+  |   File "/usr/local/lib/python3.12/site-packages/starlette/_utils.py", line 77, in collapse_excgroups
+  |     yield
+  |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/base.py", line 183, in __call__
+  |     async with anyio.create_task_group() as task_group:
+  |                ^^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "/usr/local/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 772, in __aexit__
+  |     raise BaseExceptionGroup(
+  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+  +-+---------------- 1 ----------------
+    | Traceback (most recent call last):
+    |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    |     await self.app(scope, receive, _send)
+    |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/base.py", line 182, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |                                    ^^^^^^^^^^^^^^^^^^^^
+    |   File "/usr/local/lib/python3.12/contextlib.py", line 158, in __exit__
+    |     self.gen.throw(value)
+    |   File "/usr/local/lib/python3.12/site-packages/starlette/_utils.py", line 83, in collapse_excgroups
+    |     raise exc
+    |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/base.py", line 184, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/workspace/app/main.py", line 177, in _log_requests
+    |     response = await call_next(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/base.py", line 159, in call_next
+    |     raise app_exc
+    |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/base.py", line 144, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    |     await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+    |   File "/usr/local/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    |     raise exc
+    |   File "/usr/local/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    |     await app(scope, receive, sender)
+    |   File "/usr/local/lib/python3.12/site-packages/starlette/routing.py", line 716, in __call__
+    |     await self.middleware_stack(scope, receive, send)
+    |   File "/usr/local/lib/python3.12/site-packages/starlette/routing.py", line 736, in app
+    |     await route.handle(scope, receive, send)
+    |   File "/usr/local/lib/python3.12/site-packages/starlette/routing.py", line 290, in handle
+    |     await self.app(scope, receive, send)
+    |   File "/usr/local/lib/python3.12/site-packages/starlette/routing.py", line 78, in app
+    |     await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+    |   File "/usr/local/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    |     raise exc
+    |   File "/usr/local/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    |     await app(scope, receive, sender)
+    |   File "/usr/local/lib/python3.12/site-packages/starlette/routing.py", line 75, in app
+    |     response = await f(request)
+    |                ^^^^^^^^^^^^^^^^
+    |   File "/usr/local/lib/python3.12/site-packages/fastapi/applications.py", line 1009, in openapi
+    |     return JSONResponse(self.openapi())
+    |                         ^^^^^^^^^^^^^^
+    |   File "/usr/local/lib/python3.12/site-packages/fastapi/applications.py", line 981, in openapi
+    |     self.openapi_schema = get_openapi(
+    |                           ^^^^^^^^^^^^
+    |   File "/usr/local/lib/python3.12/site-packages/fastapi/openapi/utils.py", line 569, in get_openapi
+    |     return jsonable_encoder(OpenAPI(**output), by_alias=True, exclude_none=True)  # type: ignore
+    |                             ^^^^^^^^^^^^^^^^^
+    |   File "/usr/local/lib/python3.12/site-packages/pydantic/main.py", line 253, in __init__
+    |     validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    | pydantic_core._pydantic_core.ValidationError: 2 validation errors for OpenAPI
+    | components.schemas.TicketDTO.Schema.title
+    |   Input should be a valid string [type=string_type, input_value={'validate_default': False}, input_type=dict]
+    |     For further information visit https://errors.pydantic.dev/2.11/v/string_type
+    | components.schemas.TicketDTO.Reference.$ref
+    |   Field required [type=missing, input_value={'description': 'Заяв...alse}, 'type': 'object'}, input_type=dict]
+    |     For further information visit https://errors.pydantic.dev/2.11/v/missing
+    +------------------------------------
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.12/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/usr/local/lib/python3.12/site-packages/starlette/middleware/base.py", line 182, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "/usr/local/lib/python3.12/site-packages/starlette/_utils.py", line 83, in collapse_excgroups
+    raise exc
+  File "/usr/local/lib/python3.12/site-packages/starlette/middleware/base.py", line 184, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/app/main.py", line 177, in _log_requests
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/site-packages/starlette/middleware/base.py", line 159, in call_next
+    raise app_exc
+  File "/usr/local/lib/python3.12/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/usr/local/lib/python3.12/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/usr/local/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/usr/local/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/usr/local/lib/python3.12/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/usr/local/lib/python3.12/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/usr/local/lib/python3.12/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/usr/local/lib/python3.12/site-packages/starlette/routing.py", line 78, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/usr/local/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/usr/local/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/usr/local/lib/python3.12/site-packages/starlette/routing.py", line 75, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/site-packages/fastapi/applications.py", line 1009, in openapi
+    return JSONResponse(self.openapi())
+                        ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/site-packages/fastapi/applications.py", line 981, in openapi
+    self.openapi_schema = get_openapi(
+                          ^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/site-packages/fastapi/openapi/utils.py", line 569, in get_openapi
+    return jsonable_encoder(OpenAPI(**output), by_alias=True, exclude_none=True)  # type: ignore
+                            ^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/site-packages/pydantic/main.py", line 253, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pydantic_core._pydantic_core.ValidationError: 2 validation errors for OpenAPI
+components.schemas.TicketDTO.Schema.title
+  Input should be a valid string [type=string_type, input_value={'validate_default': False}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/string_type
+components.schemas.TicketDTO.Reference.$ref
+  Field required [type=missing, input_value={'description': 'Заяв...alse}, 'type': 'object'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
+2026-09-29 11:16:24 INFO    [ticket_service] Ticket service stopped
+2026-09-29 11:16:41 INFO    [ticket_service] Logging configured: level=INFO file=logs/ticket_service.log json=False audit=True
+2026-09-29 11:16:41 WARNING [app.auth.access_control] ACCESS_CONTROL_URL не задан - используется встроенный stub (только для разработки!)
+2026-09-29 11:16:41 WARNING [ticket_service] TICKETS_DATABASE_URL=memory -> in-memory хранилище (только для разработки)
+2026-09-29 11:16:41 INFO    [ticket_service] Seeded 5 demo users into справочник
+2026-09-29 11:16:41 INFO    [ticket_service] Dependencies ready: storage=InMemoryTicketRepository cache=memory notifications=on
+2026-09-29 11:16:41 INFO    [ticket_service] Ticket service started (storage=InMemoryTicketRepository)
+2026-09-29 11:16:41 INFO    [ticket_service.access] request_id=deaf13d60801 GET /openapi.json -> 200 in 51.6 ms
+2026-09-29 11:16:41 INFO    [httpx] HTTP Request: GET http://testserver/openapi.json "HTTP/1.1 200 OK"
+2026-09-29 11:16:41 INFO    [ticket_service] Ticket service stopped
