@@ -1,0 +1,70 @@
+# ============================================================================
+# Локальный стенд микросервиса заявок: PostgreSQL + Ticket Service (+ Redis опц.)
+#
+# Запуск:            docker compose up -d --build
+# Проверка:          curl http://localhost:8080/api/v1/health
+# Swagger UI:        http://localhost:8080/docs
+# Остановка/очистка: docker compose down -v
+# ============================================================================
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: tickets-db
+    environment:
+      POSTGRES_DB: tickets_db
+      POSTGRES_USER: tickets_app
+      POSTGRES_PASSWORD: tickets_pass
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # Схема применяется при первом старте тома (AUTO_CREATE_SCHEMA можно выключить)
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tickets_app -d tickets_db"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # Опционально: распределённый кэш. Сервис работает и без него (in-process LRU).
+  redis:
+    image: redis:7-alpine
+    container_name: tickets-redis
+    command: ["redis-server", "--appendonly", "no"]
+    profiles: ["cache"]
+    ports:
+      - "6379:6379"
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ticket-service:1.0.0
+    container_name: ticket-service
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      TICKETS_DATABASE_URL: postgresql+psycopg2://tickets_app:tickets_pass@db:5432/tickets_db
+      TICKETS_HOST: 0.0.0.0
+      TICKETS_PORT: "8080"
+      TICKETS_API_KEY: gateway-secret-key
+      ACCESS_CONTROL_API_KEY: service-secret-key
+      ACCESS_CONTROL_URL: ""          # пусто -> встроенный dev-клиент прав доступа
+      SEED_DEMO_DATA: "1"
+      AUTO_CREATE_SCHEMA: "1"
+      LOG_LEVEL: INFO
+      LOG_JSON: "0"
+      CACHE_ENABLED: "1"
+      REDIS_URL: ""                   # например redis://redis:6379/0 (profile cache)
+      NOTIFICATIONS_ENABLED: "1"
+      NOTIFICATION_WEBHOOK_URL: ""
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./logs:/srv/ticket-service/logs
+    restart: unless-stopped
+
+volumes:
+  pgdata:
