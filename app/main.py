@@ -238,8 +238,8 @@ def create_app(settings: Optional[Settings] = None) -> FastAPI:
         contact={"name": "Ticket Service Team", "email": "support@example.com"},
         license_info={"name": "MIT License"},
         servers=[
-            {"url": "http://localhost:9090", "description": "Локальная разработка"},
-            {"url": "http://ticket-service:9090", "description": "Docker-сеть (docker-compose)"},
+            {"url": "http://localhost:9081", "description": "Локальная разработка"},
+            {"url": "http://ticket-service:9081", "description": "Docker-сеть (docker-compose)"},
         ],
         lifespan=lifespan,
         docs_url="/docs",

@@ -1,6 +1,6 @@
-# Compiled/Binary files
+# Python compiled files
 __pycache__/
 *.pyc
 
-# Logs and temp files
+# Logs
 logs/
